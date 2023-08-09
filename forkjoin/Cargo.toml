@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.72"
 crossbeam = "0.8.2"
+crossbeam-utils = "0.8.16"
 error-chain = "0.12.4"
 lazy_static = "1.4.0"
 thiserror = "1.0.44"

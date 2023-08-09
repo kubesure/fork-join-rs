@@ -1,9 +1,12 @@
-use crossbeam::channel;
+use anyhow::Result;
+
+use crossbeam::channel::Receiver;
+use crossbeam_utils::sync::WaitGroup;
 use std::any::Any;
 use thiserror::Error;
 
 #[derive(Debug)]
-struct Result<'a> {
+struct FJResult<'a> {
     id: String,
     x: Box<dyn Any>,
     err: &'a FJError<'a>,
@@ -23,13 +26,20 @@ enum FJError<'a> {
     #[error("error code: {0} Concurrency context error")]
     ConcurrencyContextError(&'a str),
 }
+
+struct Input<'a> {
+    id: u32,
+    x: Box<dyn Any>,
+    wg: &'a WaitGroup,
+}
+
 struct Multiplexer {
     workers: Vec<Box<dyn Worker>>,
 }
 
 trait Worker {
-    fn work(&self) -> (channel::Receiver<Result>, channel::Receiver<Heartbeat>);
-    fn active_dead_line_seconds(&self) -> u32;
+    fn work(&self) -> Result<Receiver<FJResult>, Receiver<Heartbeat>>;
+    fn active_dead_line_seconds(&self) -> Result<u32>;
 }
 
 struct Heartbeat {
