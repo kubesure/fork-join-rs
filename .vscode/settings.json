@@ -1,0 +1,5 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./forkjoin/Cargo.toml"
+    ]
+}
